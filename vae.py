@@ -57,6 +57,30 @@ model = Autoencoder()
 
 device = torch.device(
         "mps")
-
+model.to(device)
 print("Model created and moved to device: " , device)
 print(model)
+
+criterion = nn.MSELoss()
+
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
+num_epochs = 10
+
+for epoch in range(num_epochs):
+    for data in train_loader:
+        images, _ = data
+        images = images.to(device)
+
+        reconstructed = model(images)
+
+        loss = criterion(reconstructed, images)
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+    print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}")
+print("\n Training complete!")
+
+
